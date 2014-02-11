@@ -2,3 +2,6 @@ bible_corpus
 HotelReviews
 *.pyc
 *.pyo
+*.test
+*.train
+*.valid
