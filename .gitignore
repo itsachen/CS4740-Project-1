@@ -2,3 +2,5 @@ bible_corpus
 HotelReviews
 *.pyc
 *.pyo
+
+*.swp
