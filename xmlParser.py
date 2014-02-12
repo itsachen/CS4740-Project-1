@@ -1,8 +1,8 @@
 import xml.etree.ElementTree as ET
 
-def parseXml(file):
-    tree = ET.parse(file)
-    root = tree.getroot()
+def parseXml(filename):
+    filetext = open(filename).read()
+    root = ET.fromstring("<BIBLE>" + filetext + "</BIBLE>")
 
     sentenceList = []
 
