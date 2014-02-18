@@ -10,6 +10,6 @@ while token != '<e>' :
     r = random.random()
     for (token, probability) in cumulativeTable :
         if r < probability :
-            if token != '<e>' :
+            if not(token == '<e>' or token == '<s>') :
                 print token
             break

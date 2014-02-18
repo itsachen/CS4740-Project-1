@@ -6,5 +6,4 @@ def create_frequency_table(parsed_list):
                 frequencyTable[token] += 1
             else:
                 frequencyTable[token] = 1
-    print(frequencyTable['<e>'])
     return frequencyTable
