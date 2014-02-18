@@ -12,14 +12,14 @@ def createProbabilityTable(frequencyTable):
 def createCumulativeTable(probabilityTable):
     probatility = 0.0
     counter = 0
-    cumulativeTable = {}
+    cumulativeTable = []
     for token in probabilityTable:
         counter += 1
         if counter != len(probabilityTable):
             probatility += probabilityTable[token]
-            cumulativeTable[token] = probatility
+            cumulativeTable.append((token, probatility))
         else:
-            cumulativeTable[token] = 1.0
+            cumulativeTable.append((token, 1.0))
 
     return cumulativeTable
 
