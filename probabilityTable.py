@@ -67,3 +67,4 @@ cumulativeTable = createNgramCumulativeTable(probabilityTable, 2)
 print cumulativeTable
 
 
+
