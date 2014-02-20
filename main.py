@@ -30,8 +30,7 @@ def write_sentences(hotel, unigram, n):
         for i in range(n):
             #TODO: bigramify
             cumulativeTable = createBigramCumulativeTable(createBigramProbabilityTable(create_bigram_frequency_table(outList)))
-            
-            #print cumulativeTable
+
             token = '<s>'
             s = ""
             while token != '<e>' :
@@ -44,5 +43,5 @@ def write_sentences(hotel, unigram, n):
                             s += token
                         break
             print s + "\n"
-            
+#arg1 = hotel, arg2 = unigram, arg3 = number of sentences      
 write_sentences(sys.argv[1] == 'True', sys.argv[2] == 'True', int(sys.argv[3]))

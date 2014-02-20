@@ -35,10 +35,4 @@ def createBigramCumulativeTable(bigramProbabilityTable):
         bigramCumulativeTable[token] = createCumulativeTable(bigramProbabilityTable[token])
     return bigramCumulativeTable
 
-frequencyTable = {'a':{'a':1, 'b':2}, 'b':{'a':3, 'b':4, 'c':5}, 'c':{'a':1, 'b':2, 'd':5}, 'd':{'a':2, 'b':4}}
-probabilityTable = createBigramProbabilityTable(frequencyTable)
-cumulativeTable = createBigramCumulativeTable(probabilityTable)
-print cumulativeTable
-print 'end'
-
 
