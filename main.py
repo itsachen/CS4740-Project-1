@@ -44,4 +44,4 @@ def write_sentences(hotel, unigram, n):
                         break
             print s + "\n"
         
-write_sentences(True, True, 10)
+write_sentences(False, False, 10)
