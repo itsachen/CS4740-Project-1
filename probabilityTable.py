@@ -8,7 +8,6 @@ def createProbabilityTable(frequencyTable):
     return probabilityTable 
 
 
-
 def createCumulativeTable(probabilityTable):
     probatility = 0.0
     counter = 0
@@ -20,11 +19,26 @@ def createCumulativeTable(probabilityTable):
             cumulativeTable.append((token, probatility))
         else:
             cumulativeTable.append((token, 1.0))
-
     return cumulativeTable
 
-frequencyTable = {'a':1, 'b':2, 'c':3, 'd':4}
-probabilityTable = createProbabilityTable(frequencyTable)
-cumulativeTable = createCumulativeTable(probabilityTable)
-print probabilityTable
+
+def createBigramProbabilityTable(bigramFrequencyTable):
+    bigramProbabilityTable = {}
+    for token in bigramFrequencyTable:
+        bigramProbabilityTable[token] = createProbabilityTable(bigramFrequencyTable[token])
+    return bigramProbabilityTable
+
+
+def createBigramCumulativeTable(bigramProbabilityTable):
+    bigramCumulativeTable = {}
+    for token in bigramProbabilityTable:
+        bigramCumulativeTable[token] = createCumulativeTable(bigramProbabilityTable[token])
+    return bigramCumulativeTable
+
+frequencyTable = {'a':{'a':1, 'b':2}, 'b':{'a':3, 'b':4, 'c':5}, 'c':{'a':1, 'b':2, 'd':5}, 'd':{'a':2, 'b':4}}
+probabilityTable = createBigramProbabilityTable(frequencyTable)
+cumulativeTable = createBigramCumulativeTable(probabilityTable)
 print cumulativeTable
+print 'end'
+
+
