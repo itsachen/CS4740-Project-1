@@ -2,6 +2,7 @@ from Parser import *
 from probabilityTable import *
 from frequencyTable import *
 import random
+import sys
 
 #hotel and unigram are boolean, n is the number of sentences
 def write_sentences(hotel, unigram, n):
@@ -11,7 +12,7 @@ def write_sentences(hotel, unigram, n):
         outList = parse_bible()
     if unigram :
         for i in range(n):
-            cumulativeTable = createCumulativeTable(createProbabilityTable(create_frequency_table(outList)))
+            cumulativeTable = createCumulativeTable(createProbabilityTable(create_unigram_frequency_table(outList)))
             #print cumulativeTable
             token = '<s>'
             s = ""
@@ -43,5 +44,5 @@ def write_sentences(hotel, unigram, n):
                             s += token
                         break
             print s + "\n"
-        
-write_sentences(False, False, 10)
+            
+write_sentences(sys.argv[1] == 'True', sys.argv[2] == 'True', int(sys.argv[3]))
