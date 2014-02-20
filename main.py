@@ -28,7 +28,7 @@ def write_sentences(hotel, unigram, n):
     else :
         for i in range(n):
             #TODO: bigramify
-            cumulativeTable = createCumulativeTable(createProbabilityTable(create_frequency_table(outList)))
+            cumulativeTable = createBigramCumulativeTable(createBigramProbabilityTable(create_bigram_frequency_table(outList)))
             
             #print cumulativeTable
             token = '<s>'
