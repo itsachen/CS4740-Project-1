@@ -35,10 +35,35 @@ def createBigramCumulativeTable(bigramProbabilityTable):
         bigramCumulativeTable[token] = createCumulativeTable(bigramProbabilityTable[token])
     return bigramCumulativeTable
 
+def createNgramProbabilityTable(ngramFrequencyTable, n):
+    if n < 1:
+        return {}
+    elif n == 1:
+        return createProbabilityTable(ngramFrequencyTable)
+    elif n is 2:
+        return createBigramProbabilityTable(ngramFrequencyTable)
+    else:
+        ngramProbabilityTable = {}
+        for token in ngramFrequencyTable:
+            ngramProbabilityTable[token] = createNgramProbabilityTable(ngramFrequencyTable[token]. n-1)
+        return ngramProbabilityTable
+
+def createNgramCumulativeTable(ngramProbabilityTable, n):
+    if n < 1:
+        return {}
+    elif n == 1:
+        return createCumulativeTable(ngramProbabilityTable)
+    elif n is 2:
+        return createBigramCumulativeTable(ngramProbabilityTable)
+    else:
+        ngramCumulativeTable = {}
+        for token in ngramProbabilityTable:
+            ngramCumulativeTable[token] = createNgramCumulativeTable(ngramProbabilityTable[token]. n-1)
+        return ngramCumulativeTable
+
 frequencyTable = {'a':{'a':1, 'b':2}, 'b':{'a':3, 'b':4, 'c':5}, 'c':{'a':1, 'b':2, 'd':5}, 'd':{'a':2, 'b':4}}
-probabilityTable = createBigramProbabilityTable(frequencyTable)
-cumulativeTable = createBigramCumulativeTable(probabilityTable)
+probabilityTable = createNgramProbabilityTable(frequencyTable, 2)
+cumulativeTable = createNgramCumulativeTable(probabilityTable, 2)
 print cumulativeTable
-print 'end'
 
 
