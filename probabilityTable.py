@@ -45,7 +45,7 @@ def createNgramProbabilityTable(ngramFrequencyTable, n):
     else:
         ngramProbabilityTable = {}
         for token in ngramFrequencyTable:
-            ngramProbabilityTable[token] = createNgramProbabilityTable(ngramFrequencyTable[token]. n-1)
+            ngramProbabilityTable[token] = createNgramProbabilityTable(ngramFrequencyTable[token], n-1)
         return ngramProbabilityTable
 
 def createNgramCumulativeTable(ngramProbabilityTable, n):
@@ -58,12 +58,13 @@ def createNgramCumulativeTable(ngramProbabilityTable, n):
     else:
         ngramCumulativeTable = {}
         for token in ngramProbabilityTable:
-            ngramCumulativeTable[token] = createNgramCumulativeTable(ngramProbabilityTable[token]. n-1)
+            ngramCumulativeTable[token] = createNgramCumulativeTable(ngramProbabilityTable[token], n-1)
         return ngramCumulativeTable
 
-frequencyTable = {'a':{'a':1, 'b':2}, 'b':{'a':3, 'b':4, 'c':5}, 'c':{'a':1, 'b':2, 'd':5}, 'd':{'a':2, 'b':4}}
-probabilityTable = createNgramProbabilityTable(frequencyTable, 2)
-cumulativeTable = createNgramCumulativeTable(probabilityTable, 2)
+#frequencyTable = {'a':{'a':1, 'b':2}, 'b':{'a':3, 'b':4, 'c':5}, 'c':{'a':1, 'b':2, 'd':5}, 'd':{'a':2, 'b':4}}
+frequencyTable = {'a':{'a':{'a':2, 'c':1}, 'b':{'a':3, 'b':4}}}
+probabilityTable = createNgramProbabilityTable(frequencyTable, 3)
+cumulativeTable = createNgramCumulativeTable(probabilityTable, 3)
 print cumulativeTable
 
 
