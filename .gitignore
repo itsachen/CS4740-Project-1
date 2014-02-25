@@ -1,5 +1,6 @@
 bible_corpus
 HotelReviews
+predictions.out
 *.pyc
 *.pyo
 *.test
