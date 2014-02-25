@@ -50,12 +50,14 @@ def parse_kaggle_hotel_reviews(filename):
         next(f) # Skip the first line that describes the columns
         for line in f:
             review_text = line[2:]
+            review_list = []
             sentences = sentence_tokenizer.tokenize(review_text)
             for sentence in sentences:
                 tokenized_sentence = nltk.word_tokenize(sentence)
                 tokenized_sentence.insert(0,'<s>')
                 tokenized_sentence.append('<e>')
-                output_list.append(tokenized_sentence)
+                review_list.append(tokenized_sentence)
+            output_list.append(review_list)
 
     return output_list
 
