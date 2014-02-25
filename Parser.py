@@ -43,6 +43,22 @@ def parse_hotel_reviews_for_truthfulness(filename=hotel_dataset):
 
     return {"truthful": truthful_list, "untruthful": untruthful_list}
 
+def parse_kaggle_hotel_reviews(filename):
+    output_list = []
+
+    with open(filename) as f:
+        next(f) # Skip the first line that describes the columns
+        for line in f:
+            review_text = line[2:]
+            sentences = sentence_tokenizer.tokenize(review_text)
+            for sentence in sentences:
+                tokenized_sentence = nltk.word_tokenize(sentence)
+                tokenized_sentence.insert(0,'<s>')
+                tokenized_sentence.append('<e>')
+                output_list.append(tokenized_sentence)
+
+    return output_list
+
 def parse_bible(filename=bible_dataset):
     output_list = []
     filetext = open(filename).read()
