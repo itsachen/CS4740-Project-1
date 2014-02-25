@@ -61,11 +61,11 @@ def predict_sentence_list():
             truthful_tuple = isTruthful(tokenList, truthful_bigram, untruthful_bigram)
             probability_truthful = probability_truthful + truthful_tuple[0]
             probability_untruthful = probability_untruthful + truthful_tuple[1]
-        counter += 1 
         if probability_truthful >= probability_untruthful:
                 output_list.append(str(counter) + ",1")
         else:
             output_list.append(str(counter) + ",0")      
+        counter += 1     
     return output_list
 
 
