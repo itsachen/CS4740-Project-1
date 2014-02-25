@@ -36,9 +36,9 @@ def parse_hotel_reviews_for_truthfulness(filename=hotel_dataset):
                 tokenized_sentence = nltk.word_tokenize(sentence)
                 tokenized_sentence.insert(0,'<s>')
                 tokenized_sentence.append('<e>')
-                if line[0] == 1:
+                if line[0] == '1':
                     truthful_list.append(tokenized_sentence)
-                else:
+                elif line[0] == '0':
                     untruthful_list.append(tokenized_sentence)
 
     return {"truthful": truthful_list, "untruthful": untruthful_list}
