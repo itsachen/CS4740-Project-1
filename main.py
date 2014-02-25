@@ -49,18 +49,23 @@ def write_sentences(hotel, unigram, n):
 def predict_sentence_list():
     output_list = []
     train_sentence_list = parse_hotel_reviews_for_truthfulness()
-    test_sentence_list = parse_all_hotel_reviews(filename="HotelReviews/reviews.test")
+    test_sentence_list = parse_kaggle_hotel_reviews("HotelReviews/kaggle_data_file.txt")
 
     truthful_bigram = createBigramProbabilityTable(create_bigram_frequency_table(train_sentence_list["truthful"]))
     untruthful_bigram = createBigramProbabilityTable(create_bigram_frequency_table(train_sentence_list["untruthful"]))
     counter = 0
-    for tokenList in test_sentence_list:
-        truthful_tuple = isTruthful(tokenList, truthful_bigram, untruthful_bigram)
-        if truthful_tuple[0] >= truthful_tuple[1]:
-            output_list.append(str(counter) + ",1")
+    for review in test_sentence_list:
+        probability_truthful = 0.0
+        probability_untruthful = 0.0
+        for tokenList in review:
+            truthful_tuple = isTruthful(tokenList, truthful_bigram, untruthful_bigram)
+            probability_truthful = probability_truthful + truthful_tuple[0]
+            probability_untruthful = probability_untruthful + truthful_tuple[1]
+        counter += 1 
+        if probability_truthful >= probability_untruthful:
+                output_list.append(str(counter) + ",1")
         else:
-            output_list.append(str(counter) + ",0")
-        counter += 1        
+            output_list.append(str(counter) + ",0")      
     return output_list
 
 
@@ -86,10 +91,8 @@ def writeToFile(filename, lst):
     file_object.write('Id,Label\n')
     for line in lst:
         file_object.write(line + '\n')
+    file_object.close()
 
 #predict_sentence_list()
 predictions = predict_sentence_list()
-for p in predictions:
-    print p
-
 writeToFile("predictions.out", predictions)
