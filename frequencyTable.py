@@ -36,3 +36,32 @@ def create_bigram_frequency_table(parsed_list):
                     frequencyTable[current_word] = {next_word:1}
     return frequencyTable
 
+def create_ngram_frequency_table(parsed_list, n):
+    frequencyTable = {}
+    if n == 0:
+        return frequencyTable
+    for token_list in parsed_list:
+        # Append additional sentence start symbols
+        for _ in range(n-2):
+            token_list.insert(0,'<s>')
+        token_list_length = len(token_list)
+        for i in range(token_list_length - n + 1):
+            # Create the ngram
+            ngram = []
+            for j in range(i,i+n):
+                ngram.append(token_list[j])
+            update_frequency_table(ngram, frequencyTable)
+    return frequencyTable
+
+# Recursively update the frequency table
+def update_frequency_table(ngram, frequency_table):
+    if len(ngram) == 1:
+        if ngram[0] in frequency_table:
+            frequency_table[ngram[0]] += 1
+        else:
+            frequency_table[ngram[0]] = 1
+    else:
+        if ngram[0] not in frequency_table:
+            frequency_table[ngram[0]] = {}
+        update_frequency_table(ngram[1:], frequency_table[ngram[0]])
+                
