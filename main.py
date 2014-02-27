@@ -48,11 +48,20 @@ def write_sentences(hotel, unigram, n):
 #write_sentences(sys.argv[1] == 'True', sys.argv[2] == 'True', int(sys.argv[3]))
 
 def create_smoothed_bigram_probability_table(outList):
-    frequencyTable, wordSet = create_bigram_frequency_table(outList, True)
-    frequencyTable, prob = smooth_bigram_frequency_table(frequencyTable)
-    probabilityTable = createBigramProbabilityTable(frequencyTable)
+    frequencyTable, wordSet = create_ngram_frequency_table(outList, 2, True)
+    frequencyTable, prob = smooth_bigram_frequency_table(frequencyTable, wordSet)
+    probabilityTable = normalize_bigram_probability_table(createBigramProbabilityTable(frequencyTable), prob, wordSet)
     return probabilityTable, prob, wordSet
-
+    
+def normalize_bigram_probability_table(probabilityTable, prob, wordSet):
+    for token in probabilityTable :
+        totalProb = prob
+        for token2 in probabilityTable[token] :
+            totalProb += probabilityTable[token][token2]
+        for token2 in probabilityTable[token] :
+            probabilityTable[token][token2] /= totalProb
+    return probabilityTable
+    
 def predict_sentence_list():
     output_list = []
     train_sentence_list = parse_hotel_reviews_for_truthfulness()
@@ -63,18 +72,44 @@ def predict_sentence_list():
     counter = 0
 
     for review in test_sentence_list:
-        probability_truthful = 0.0
-        probability_untruthful = 0.0
+        truthfulPerplexity = 1.0
+        untruthfulPerplexity = 1.0
         for tokenList in review:
-            truthful_tuple = isTruthful(tokenList, truthful_bigram, untruthful_bigram, probUnkTruthful, probUnkUntruthful, wordSetTruthful, wordSetUntruthful)
-            probability_truthful = probability_truthful + truthful_tuple[0]
-            probability_untruthful = probability_untruthful + truthful_tuple[1]
-        if probability_truthful >= probability_untruthful:
-                output_list.append(str(counter) + ",1")
+            
+            truthfulPerplexity *= bigram_perplexity(truthful_bigram, probUnkTruthful, tokenList)
+            untruthfulPerplexity *= bigram_perplexity(untruthful_bigram, probUnkUntruthful, tokenList)
+            
+        if truthfulPerplexity < untruthfulPerplexity :
+            output_list.append(str(counter) + ",1")
         else:
             output_list.append(str(counter) + ",0")      
         counter += 1     
     return output_list
+    
+def bigram_perplexity(probabilityTable, unkProbability, outList):
+    perplexity = 1.0
+    length = 0
+    for token_list in outList :
+        token_list_length = len(token_list)
+        length += token_list_length
+    for token_list in outList :
+        token_list_length = len(token_list)
+        for i in range(token_list_length):
+            if i < token_list_length - 1:
+                current_word = token_list[i]
+                next_word = token_list[i+1]
+                prob = 1.0
+                if current_word in probabilityTable and next_word in probabilityTable[current_word] :
+                    prob = probabilityTable[current_word][next_word]
+                elif '<UNK>' in probabilityTable and next_word in probabilityTable['<UNK>']:
+                    prob = probabilityTable['<UNK>'][next_word]
+                elif '<UNK>' in probabilityTable and '<UNK>' in probabilityTable['<UNK>']:
+                    prob = probabilityTable['<UNK>']['<UNK>']
+                else :
+                    prob = unkProbability
+                perplexity = perplexity * pow(1.0 / prob, 1.0 / length)
+    return perplexity
+
 
 
 def isTruthful(tokenList, truthful_bigram, untruthful_bigram, probUnkTruthful, probUnkUntruthful, truthfulWordList, untruthfulWordList):
@@ -103,11 +138,29 @@ def isTruthful(tokenList, truthful_bigram, untruthful_bigram, probUnkTruthful, p
             if previous_tokenT in truthful_bigram and tokenT in truthful_bigram[previous_tokenT]:
                 probability_truthful = probability_truthful * truthful_bigram[previous_tokenT][tokenT]
             else :
-                probability_truthful = probability_truthful * probUnkTruthful
+                previous_tokenT = '<UNK>'
+                if previous_tokenT in truthful_bigram and tokenT in truthful_bigram[previous_tokenT]:
+                    probability_truthful = probability_truthful * truthful_bigram[previous_tokenT][tokenT]
+                else :
+                    tokenT = '<UNK>'
+                    if previous_tokenT in truthful_bigram and tokenT in truthful_bigram[previous_tokenT]:
+                        probability_truthful = probability_truthful * truthful_bigram[previous_tokenT][tokenT]
+                    else: 
+                        probability_truthful = probability_truthful * probUnkTruthful/ len(truthfulWordList)
+
             if previous_tokenUT in untruthful_bigram and tokenUT in untruthful_bigram[previous_tokenUT]:
                 probability_untruthful = probability_untruthful * untruthful_bigram[previous_tokenUT][tokenUT]
-            else:
-                probability_truthful = probability_truthful * probUnkUntruthful
+            else :
+                previous_tokenUT = '<UNK>'
+                if previous_tokenUT in untruthful_bigram and tokenUT in untruthful_bigram[previous_tokenUT]:
+                    probability_untruthful = probability_untruthful * untruthful_bigram[previous_tokenUT][tokenUT]
+                else :
+                    tokenUT = '<UNK>'
+                    if previous_tokenUT in untruthful_bigram and tokenUT in untruthful_bigram[previous_tokenUT]:
+                        probability_untruthful = probability_untruthful * untruthful_bigram[previous_tokenUT][tokenUT]
+                    else: 
+                        probability_untruthful = probability_untruthful * probUnkUntruthful/ len(untruthfulWordList)
+
             previous_token = token
     return [probability_truthful, probability_untruthful]
 
@@ -118,6 +171,14 @@ def writeToFile(filename, lst):
         file_object.write(line + '\n')
     file_object.close()
 
+    
+def test_perplexity():
+    probabilityTable, prob, wordList = create_smoothed_bigram_probability_table(parse_all_hotel_reviews())
+    print bigram_perplexity(probabilityTable, prob, parse_all_hotel_reviews("HotelReviews/reviews.test"))
+    
+test_perplexity()
 #predict_sentence_list()
-predictions = predict_sentence_list()
-writeToFile("predictions.out", predictions)
+#print create_ngram_frequency_table(parse_all_hotel_reviews(), 1, True)
+#print get_ngram_counts(create_ngram_frequency_table(parse_all_hotel_reviews(), 2, True), {}, 0, 2)
+#predictions = predict_sentence_list()
+#writeToFile("predictions.out", predictions)
