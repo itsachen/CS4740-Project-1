@@ -5,11 +5,37 @@ import random
 import sys
 
 #hotel and unigram are boolean, n is the number of sentences
-def write_sentences(hotel, unigram, n):
+def write_sentences(hotel, n, numSentences):
     if hotel :
         outList = parse_all_hotel_reviews()
     else :
         outList = parse_bible()
+    cumulativeTable = createNgramCumulativeTable(createNgramProbabilityTable(create_ngram_frequency_table(outList, n, False), n), n)
+    for i in range(numSentences):
+        ngram = []
+        token = '<s>'
+        for j in range(0, n-1):
+            ngram.append('<s>')
+        s= ""
+        while token != '<e>' :
+            r = random.random()
+            probabilities = get_cumulative_probabilities(ngram, cumulativeTable, n)
+            for (token, probability) in probabilities :
+                if r < probability :
+                    if not (token == '<e>' or token == '<s>') :
+                        if s != "" :
+                            s += " "
+                        s += token
+                    break
+        print s + "\n"
+def get_cumulative_probabilities(ngram, cumulativeTable, n) :
+    if n == 1 :
+        return cumulativeTable
+    else :
+        return get_cumulative_probabilities(ngram[1:], cumulativeTable[ngram[0]], n-1)
+            
+            
+    '''    
     if unigram :
         for i in range(n):
             cumulativeTable = createCumulativeTable(createProbabilityTable(create_unigram_frequency_table(outList, False)))
@@ -44,6 +70,7 @@ def write_sentences(hotel, unigram, n):
                             s += token
                         break
             print s + "\n"
+            '''
 #arg1 = hotel, arg2 = unigram, arg3 = number of sentences      
 #write_sentences(sys.argv[1] == 'True', sys.argv[2] == 'True', int(sys.argv[3]))
 
@@ -228,9 +255,10 @@ def test_perplexity():
     probabilityTable, prob, wordList = create_smoothed_ngram_probability_table(parse_all_hotel_reviews())
     print perplexity(probabilityTable, prob, parse_all_hotel_reviews("HotelReviews/reviews.test"), 1)
     
-test_perplexity()
+#test_perplexity()
 #predict_sentence_list()
 #print create_ngram_frequency_table(parse_all_hotel_reviews(), 1, True)
 #print get_ngram_counts(create_ngram_frequency_table(parse_all_hotel_reviews(), 2, True), {}, 0, 2)
-predictions = predict_sentence_list()
-writeToFile("predictions.out", predictions)
+#predictions = predict_sentence_list()
+#writeToFile("predictions.out", predictions)
+write_sentences(True, 1, 5)
