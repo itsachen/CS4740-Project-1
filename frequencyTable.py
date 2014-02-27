@@ -54,7 +54,7 @@ def create_ngram_frequency_table(parsed_list, n, unk):
             ngram = []
             for j in range(i,i+n):
                 token = token_list[j] 
-                if token not in wordSet :
+                if unk and token not in wordSet :
                     wordSet.add(token)
                     token_list[j] = '<UNK>'
                     token = '<UNK>'

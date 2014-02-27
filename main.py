@@ -10,7 +10,8 @@ def write_sentences(hotel, n, numSentences):
         outList = parse_all_hotel_reviews()
     else :
         outList = parse_bible()
-    cumulativeTable = createNgramCumulativeTable(createNgramProbabilityTable(create_ngram_frequency_table(outList, n, False), n), n)
+    frequencyTable, _ = create_ngram_frequency_table(outList, n, False)
+    cumulativeTable = createNgramCumulativeTable(createNgramProbabilityTable(frequencyTable, n), n)
     for i in range(numSentences):
         ngram = []
         token = '<s>'
@@ -26,6 +27,8 @@ def write_sentences(hotel, n, numSentences):
                         if s != "" :
                             s += " "
                         s += token
+                    ngram.pop(0)
+                    ngram.append(token)
                     break
         print s + "\n"
 def get_cumulative_probabilities(ngram, cumulativeTable, n) :
@@ -261,4 +264,4 @@ def test_perplexity():
 #print get_ngram_counts(create_ngram_frequency_table(parse_all_hotel_reviews(), 2, True), {}, 0, 2)
 #predictions = predict_sentence_list()
 #writeToFile("predictions.out", predictions)
-write_sentences(True, 1, 5)
+write_sentences(True, 4, 5)
