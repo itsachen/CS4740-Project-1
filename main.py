@@ -27,8 +27,9 @@ def write_sentences(hotel, n, numSentences):
                         if s != "" :
                             s += " "
                         s += token
-                    ngram.pop(0)
-                    ngram.append(token)
+                    if len(ngram) > 0 :
+                        ngram.pop(0)
+                        ngram.append(token)
                     break
         print s + "\n"
 def get_cumulative_probabilities(ngram, cumulativeTable, n) :
@@ -36,46 +37,6 @@ def get_cumulative_probabilities(ngram, cumulativeTable, n) :
         return cumulativeTable
     else :
         return get_cumulative_probabilities(ngram[1:], cumulativeTable[ngram[0]], n-1)
-            
-            
-    '''    
-    if unigram :
-        for i in range(n):
-            cumulativeTable = createCumulativeTable(createProbabilityTable(create_unigram_frequency_table(outList, False)))
-            #print cumulativeTable
-            token = '<s>'
-            s = ""
-            while token != '<e>' :
-                r = random.random()
-                for (token, probability) in cumulativeTable :
-                    if r < probability :
-                        if not(token == '<e>' or token == '<s>') :
-                            if s != "":
-                                s+= " "
-                            s += token
-                        break
-            print s + "\n"
-    else :
-        for i in range(n):
-            #TODO: bigramify
-            frequencyTable, wordSet = create_bigram_frequency_table(outList, False)
-            cumulativeTable = createBigramCumulativeTable(createBigramProbabilityTable(frequencyTable))
-
-            token = '<s>'
-            s = ""
-            while token != '<e>' :
-                r = random.random()
-                for (token, probability) in cumulativeTable[token] :
-                    if r < probability :
-                        if not(token == '<e>' or token == '<s>') :
-                            if s != "":
-                                s+= " "
-                            s += token
-                        break
-            print s + "\n"
-            '''
-#arg1 = hotel, arg2 = unigram, arg3 = number of sentences      
-#write_sentences(sys.argv[1] == 'True', sys.argv[2] == 'True', int(sys.argv[3]))
 
 def create_smoothed_ngram_probability_table(outList, n):
     frequencyTable, wordSet = create_ngram_frequency_table(outList, n, True)
@@ -259,23 +220,49 @@ def test_perplexity(hotel, n):
     else :
         outList = parse_bible()
     probabilityTable, prob, wordList = create_smoothed_ngram_probability_table(outList, n)
-    print perplexity(probabilityTable, prob, parse_all_hotel_reviews("HotelReviews/reviews.test"), n)
+    if hotel: 
+        print perplexity(probabilityTable, prob, parse_all_hotel_reviews("HotelReviews/reviews.test"), n)
+    else :
+        print perplexity(probabilityTable, prob, parse_all_hotel_reviews("bible_corpus/kjbible.test"), n)
     
-    
-#Commands
+#Commands 
+'''
+write_sentences(boolean hotel, int n, int numSentences)
+
+print "HOTEL: \n"
+write_sentences(True, 1, 3)
+print "\n"
+write_sentences(True, 2, 3)
+print "\n"
+write_sentences(True, 3, 3)
+print "\n"
+write_sentences(True, 4, 3)
+print "\n"
+
+print "BIBLE: \n"
+write_sentences(False, 1, 3)
+print "\n"
+write_sentences(False, 2, 3)
+print "\n"
+write_sentences(False, 3, 3)
+print "\n"
+write_sentences(False, 4, 3)
+print "\n"
+'''
 
 #Perplexity
 '''
 test_perplexity(True, 1)
-test_perplexity(False, 1)
 test_perplexity(True, 2)
-test_perplexity(False, 2)
 test_perplexity(True, 3)
-test_perplexity(False, 3)'''
+test_perplexity(False, 1)
+test_perplexity(False, 2)
+test_perplexity(False, 3)
+'''
 
-#predict_sentence_list()
-#print create_ngram_frequency_table(parse_all_hotel_reviews(), 1, True)
-#print get_ngram_counts(create_ngram_frequency_table(parse_all_hotel_reviews(), 2, True), {}, 0, 2)
-predictions = predict_sentence_list(2)
+#Kaggle:
+
+n = 2
+predictions = predict_sentence_list(n)
 writeToFile("predictions.out", predictions)
-#write_sentences(sys.argv[1] == 'True', int(sys.argv[2]), int(sys.argv[3]))
+
