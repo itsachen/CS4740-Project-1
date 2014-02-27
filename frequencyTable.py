@@ -98,9 +98,9 @@ def get_ngram_counts(frequencyTable, counts, totalNgrams, n):
         counts, totalNgrams = get_ngram_counts(frequencyTable[token], counts, totalNgrams, n-1)
     return counts, totalNgrams
     
-def smooth_ngram_frequency_table(frequencyTable, n):
-    if n == 2:
-        return smooth_bigram_frequency_table(frequencyTable)
+def smooth_ngram_frequency_table(frequencyTable, wordSet, n):
+    if n == 1:
+        return frequencyTable, 1.0
     counts = {}
     totalNgrams = 0
     #Get counts for N1, N2, etc.
@@ -117,8 +117,19 @@ def smooth_ngram_frequency_table(frequencyTable, n):
             freq = frequencyTable[token][token2]
             if freq < maxCount :
                 frequencyTable[token][token2] = float(freq + 1) * counts[freq + 1] / counts[freq]
-    return frequencyTable, float(counts[1]) / totalNgrams
+    return frequencyTable, float(len(wordSet)) / totalNgrams
 
+def smooth_frequencies(frequencyTable, n, counts, maxCount):
+    if n == 1 :
+        for token in frequencyTable :
+            freq = frequencyTable[token]
+            if freq < maxCount :
+                frequencyTable[token] = float(freq + 1) * counts[freq + 1] / counts[freq]
+    else:
+        for token in frequencyTable :
+            frequencyTable = smooth_frequencies(frequencyTable[token], n - 1, counts, maxCount)
+    return frequencyTable
+        
     
     
     
