@@ -73,13 +73,6 @@ def update_frequency_table(ngram, frequency_table, wordSet):
         if ngram[0] not in frequency_table:
             frequency_table[ngram[0]] = {}
         update_frequency_table(ngram[1:], frequency_table[ngram[0]], wordSet)
-        
-        #Treat first occurence as both word and unknown word
-        #if ngram[0] not in wordSet :
-        #    ngram[0] = '<UNK>'
-        #    if ngram[0] not in frequency_table :
-        #        frequency_table[ngram[0]] = {}
-        #    update_frequency_table(ngram[1:], frequency_table[ngram[0]], wordSet)
                 
                 
 def get_ngram_counts(frequencyTable, counts, totalNgrams, n):
